@@ -27,8 +27,7 @@ export default {
       default: () => DATE.getFullYear()
     },
     today: {
-      type: Number,
-      default: () => DATE.getDate()
+      type: Number
     },
     theme: {
       type: String,
@@ -65,10 +64,12 @@ export default {
       return weekday == 0;
     },
     isToday(d) {
-      return d == this.today;
+      return ((d == DATE.getDate()) &&
+              ((this.month - 1) == DATE.getMonth()) &&
+              (this.year == DATE.getFullYear()))
     },
     clickDay(event, d) {
-      console.log('click', event, d);
+      this.$emit('click-event', d);
     }
   },
   mounted() {
@@ -84,7 +85,8 @@ export default {
 .calendar {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 10px;
+  align-content: flex-start;
+  margin: 10px;
   max-width: 380px;
   border-top: 5px solid red;
   border: 1px solid #000;
