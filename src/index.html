@@ -8,6 +8,16 @@
   <script defer src="./index.js"></script>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <nav class="top">
+      <!-- <router-link :to="`/year/${year - 1}`"><< {{ year - 1 }}</router-link> -->
+      <router-link to="/">Home</router-link>
+      <router-link to="/year/2018">2018</router-link>
+      <!-- <router-link :to="`/year/${year}`">{{ year }}</router-link> -->
+      <router-link to="/about">About</router-link>
+      <!-- <router-link :to="`/year/${year + 1}`">{{ year + 1 }} >></router-link> -->
+    </nav>
+    <router-view></router-view>
+  </div>
 </body>
 </html>

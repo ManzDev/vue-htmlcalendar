@@ -1,33 +1,35 @@
 <template>
-  <div class="calendar">
+  <div :class="theme" class="calendar">
     <div class="month">{{ monthName }}</div>
-    <div class="offset" :key="`o${d}`" v-for="d in offsetDays"></div>
-    <div :class="{
+    <div v-for="w in weekDays" :key="w" class="week">{{ w }}</div>
+    <div class="days">
+      <div v-for="d in offsetDays" :key="`o${d}`" class="offset"></div>
+      <div v-for="d in lastDay" :key="d" :class="{
         day: true,
         sunday: isSunday(d),
         today: isToday(d)
-      }" :key="d" v-for="d in lastDay" @click="clickDay($event, d)">{{ getData(d) }}</div>
+      }" @click="clickDay(d)">{{ d }}</div>
+    </div>
   </div>
 </template>
 
 <script>
 const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-const WEEKS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
-const THEMES = ['rainbow', 'minimalist'];
 const DATE = new Date();
 
 export default {
   props: {
     month: {
       type: Number,
-      default: () => DATE.getMonth() + 1
+      default: DATE.getMonth() + 1
     },
     year: {
       type: Number,
-      default: () => DATE.getFullYear()
+      default: DATE.getFullYear(),
     },
     today: {
-      type: Number
+      type: Number,
+      default: DATE.getDate()
     },
     theme: {
       type: String,
@@ -36,7 +38,7 @@ export default {
   },
   data() {
     return {
-    }
+    };
   },
   computed: {
     // Long way
@@ -52,13 +54,13 @@ export default {
     },
     offsetDays() {
       return (this.firstDay > 0) ? this.firstDay - 1 : 6;
-    }
+    },
+    weekDays: () => ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+  },
+  mounted() {
+    //console.log('Componente montado.', this.$el);
   },
   methods: {
-    getData(d) {
-      const weekday = new Date(this.year, this.month - 1, d).getDay();
-      return `${WEEKS[weekday]}${d}`;
-    },
     isSunday(d) {
       const weekday = new Date(this.year, this.month - 1, d).getDay();
       return weekday == 0;
@@ -66,19 +68,13 @@ export default {
     isToday(d) {
       return ((d == DATE.getDate()) &&
               ((this.month - 1) == DATE.getMonth()) &&
-              (this.year == DATE.getFullYear()))
+              (this.year == DATE.getFullYear()));
     },
-    clickDay(event, d) {
+    clickDay(d) {
       this.$emit('click-event', d);
     }
-  },
-  mounted() {
-    console.log('Componente montado.', this.$el);
-
-    if (THEMES.includes(this.theme))
-      this.$el.classList.add(this.theme);
   }
-}
+};
 </script>
 
 <style lang="postcss" scoped>
@@ -87,25 +83,94 @@ export default {
   flex-wrap: wrap;
   align-content: flex-start;
   margin: 10px;
-  max-width: 380px;
-  border-top: 5px solid red;
-  border: 1px solid #000;
+  width: 378px;
+  border: 1px solid #50c08d;
 
   & .month {
     font-family: Montserrat, Impact, sans-serif;
     background: #50c08d;
     color: #fff;
     text-align: center;
-    text-shadow: 2px 2px 8px #000;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.75);
+    padding: 6px 0;
     font-size: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 100%;
-    height: 40px;
+    width: 100%;
+  }
+
+  & .week {
+    display: flex;
+    justify-content: center;
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
+    width: 50px;
+    margin: 1px;
+    padding: 2px 0;
+    color: #fff;
+    background: #aaa;
+    border: 1px solid #aaa;
+  }
+
+  & .days {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  & .offset,
+  & .day {
+    width: 50px;
+    height: 50px;
+    margin: 1px;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+    border: 1px solid transparent;
+    color: #666;
+  }
+
+  & .day {
+    --day-background: #fff;
+    background: var(--day-background);
+    border: 1px solid #999;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid #50c08d;
+      background: #50c08d;
+      color: #fff;
+    }
+  }
+
+  & .sunday {
+    font-weight: bold;
+    background: #f5c7c7;
+    border: 1px solid transparent;
+    color: red;
+  }
+
+  & .today {
+    background: steelblue;
+    color: white;
+  }
+
+  /* Themes */
+
+  &.normal {
+    & .day {
+      --day-background: #ddd;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+    }
   }
 
   &.rainbow {
+    border: 1px solid #aaa;
+
     & .month {
       background: linear-gradient(90deg, red, orange, yellow, green, blue, purple, pink);
     }
@@ -122,31 +187,6 @@ export default {
       justify-content: center;
       align-items: center;
     }
-  }
-
-  & .offset,
-  & .day {
-    width: 50px;
-    height: 50px;
-    margin: 1px;
-    border: 1px solid transparent;
-    color: #666;
-  }
-
-  & .day {
-    border: 1px solid #555;
-  }
-
-  & .sunday {
-    font-weight: bold;
-    background: #ff9494;
-    border: 1px solid transparent;
-    color: red;
-  }
-
-  & .today {
-    background: steelblue;
-    color: white;
   }
 }
 </style>

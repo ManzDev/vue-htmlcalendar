@@ -1,7 +1,7 @@
 {
-  "name": "parcel-template-blank",
+  "name": "vue-htmlcalendar",
   "version": "1.0.1",
-  "description": "Blank template project starter-kit with Parcel Bundler",
+  "description": "A simple Calendar component for learn VueJS bases",
   "main": "index.html",
   "scripts": {
     "dev": "parcel serve src/index.html --open",
@@ -50,6 +50,7 @@
     "vue-template-compiler": "^2.5.17"
   },
   "dependencies": {
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vue-router": "^3.0.1"
   }
 }
